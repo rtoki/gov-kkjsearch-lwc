@@ -1,0 +1,131 @@
+<template>
+    <lightning-card title="検索結果">
+        <div class="slds-m-around_medium">
+            <!-- 2列レイアウトで検索フィールドを配置 -->
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input 
+                        label="検索文字列 (Query)" 
+                        value={query} 
+                        onchange={handleQueryChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input 
+                        label="件名 (Project_Name)" 
+                        value={projectName} 
+                        onchange={handleProjectNameChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input 
+                        label="機関名 (Organization_Name)" 
+                        value={organizationName} 
+                        onchange={handleOrganizationNameChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input 
+                        label="最大件数 (Count)" 
+                        type="number" 
+                        value={count} 
+                        onchange={handleCountChange}>
+                    </lightning-input>
+                </div>
+                <!-- カテゴリーの選択リスト -->
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox
+                        label="カテゴリー (Category)"
+                        value={category}
+                        placeholder="選択してください"
+                        options={categoryOptions}
+                        onchange={handleCategoryChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+            <lightning-button 
+                label="検索" 
+                onclick={handleSearch} 
+                class="slds-m-top_small">
+            </lightning-button>
+        </div>
+        
+        <!-- 検索結果テーブル -->
+        <template if:true={results}>
+            <div class="slds-m-around_medium">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead>
+                        <tr>
+                            <th scope="col">ResultId</th>
+                            <th scope="col">案件名</th>
+                            <th scope="col">日付</th>
+                            <th scope="col">ファイル種別</th>
+                            <th scope="col">都道府県</th>
+                            <th scope="col">調達機関</th>
+                            <th scope="col">入札方式</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={results} for:item="work">
+                            <tr key={work.resultId}>
+                                <td>{work.resultId}</td>
+                                <td>
+                                    <a href="javascript:void(0)" data-id={work.resultId} onclick={handleShowDetails}>
+                                        {work.projectName}
+                                    </a>
+                                </td>
+                                <td>{work.projectDate}</td>
+                                <td>{work.fileType}</td>
+                                <td>{work.prefectureName}</td>
+                                <td>{work.organizationName}</td>
+                                <td>{work.procedureType}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+    </lightning-card>
+
+    <!-- モーダルダイアログ（リサイズ不可、固定サイズ） -->
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="width: 80%; max-width: 1200px; height: 90vh;">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">案件詳細</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" title="閉じる" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="閉じる" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">閉じる</span>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" style="overflow-y: auto;">
+                    <p><strong>ResultId:</strong> {selectedWork.resultId}</p>
+                    <p><strong>案件名:</strong> {selectedWork.projectName}</p>
+                    <p><strong>日付:</strong> {selectedWork.projectDate}</p>
+                    <p><strong>ファイル種別:</strong> {selectedWork.fileType}</p>
+                    <p><strong>都道府県:</strong> {selectedWork.prefectureName}</p>
+                    <p><strong>調達機関:</strong> {selectedWork.organizationName}</p>
+                    <p><strong>入札方式:</strong> {selectedWork.procedureType}</p>
+                    <p>
+                        <strong>外部文書URI:</strong>
+                        <a href={selectedWork.externalDocumentURI} target="_blank">
+                            {selectedWork.externalDocumentURI}
+                        </a>
+                    </p>
+                    <p><strong>その他詳細:</strong></p>
+                    <div style="max-height:200px; overflow-y:auto; border:1px solid #d8dde6; padding:8px;">
+                        {selectedWork.projectDescription}
+                    </div>
+                    <p><strong>Key:</strong> {selectedWork.key}</p>
+                    <p><strong>FileSize:</strong> {selectedWork.fileSize}</p>
+                    <p><strong>LgCode:</strong> {selectedWork.lgCode}</p>
+                    <p><strong>CftIssueDate:</strong> {selectedWork.cftIssueDate}</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="閉じる" onclick={handleCloseModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
