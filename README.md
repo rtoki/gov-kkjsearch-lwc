@@ -44,6 +44,10 @@
 1. LWCコンポーネントを任意のLightningページに配置
 2. 検索バーにキーワードを入力し、検索ボタンをクリック
 3. APIを通じて取得した官公需情報が一覧表示される
+![image](https://github.com/user-attachments/assets/5334bbb2-540e-4315-8b58-e41332d06721)
+4. クリックすると詳細内容がモーダルで表示される
+![image](https://github.com/user-attachments/assets/22533071-a2d0-4868-bf9f-1dc6c5afcc98)
+
 
 ## 設定
 - API認証キーの設定が必要な場合、適切なカスタムメタデータまたは環境変数に設定してください。
